@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confluence Pro — Crypto Signal & Trade Setup Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">Φ</div>
+      <div>
+        <h1>Confluence <span class="v-tag">PRO</span></h1>
+        <span>Signals · Setups · Sizing · Journal</span>
+      </div>
+    </div>
+    <div class="headright">
+      <span class="livedot"><i></i>live</span>
+      <div class="clock" id="clock">—</div>
+    </div>
+  </header>
+
+  <nav class="navtabs">
+    <button class="navtab active" data-tab="live">Live Signals</button>
+    <button class="navtab" data-tab="perf">Performance</button>
+  </nav>
+
+  <div id="liveView">
+
+    <div class="symbolbar" id="symbolbar">
+      <div class="custom-sym">
+        <input id="customInput" type="text" placeholder="e.g. PEPEUSDT" spellcheck="false">
+        <button id="customGo">Load</button>
+      </div>
+    </div>
+
+    <div class="pricestrip" id="pricestrip">
+      <span class="px" id="pxVal">—</span>
+      <span class="chg" id="pxChg">—</span>
+      <span class="sub" id="pxSym">—</span>
+      <span class="spark" id="pxSpark"></span>
+    </div>
+
+    <div class="riskbar">
+      <div class="riskbar-title">Risk Calculator</div>
+      <label>Account Size <span class="unit">$</span>
+        <input id="accountSizeInput" type="number" value="1000" min="0" step="50">
+      </label>
+      <label>Risk / Trade <span class="unit">%</span>
+        <input id="riskPctInput" type="number" value="1" min="0.1" max="10" step="0.1">
+      </label>
+      <span class="riskbar-note">Drives the position size &amp; suggested leverage in every panel below — updates instantly.</span>
+    </div>
+
+    <div class="warnstrip">⚠ Leverage multiplies both gains and losses. The numbers below are a sizing heuristic to help you keep risk consistent — not a recommendation to use leverage, and not financial advice.</div>
+
+    <div class="status" id="statusLine"><span class="loading-pulse"></span> connecting to market data…</div>
+
+    <div class="strong-alert" id="strongAlert" hidden></div>
+
+    <div class="hero" id="heroCard"></div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Scalp Window</h2>
+          <span class="tf-label">15 Minute</span>
+        </div>
+        <div class="panel-body" id="panel-15m">—</div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Swing Window</h2>
+          <span class="tf-label">1 Hour</span>
+        </div>
+        <div class="panel-body" id="panel-1h">—</div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Position Window</h2>
+          <span class="tf-label">1 Day</span>
+        </div>
+        <div class="panel-body" id="panel-1d">—</div>
+      </div>
+    </div>
+
+    <footer>
+      <b>How to read this:</b> each timeframe's confluence score weighs seven inputs into one 0–100 read — trend alignment (EMA20/50/200 stack + swing structure), proximity to a key Fibonacci retracement, a detected candlestick pattern, RSI positioning, MACD histogram direction, Bollinger Band position, and volume confirmation.<br><br>
+      <b>Overall Bias:</b> the card above combines all three timeframes into one weighted read (1D counts most, 15m least) plus a vote count — it's context for reading the panels, not a replacement for checking each one individually.<br><br>
+      <b>Strong Confluence alert:</b> appears when 2 or more of the 3 timeframes agree on direction. It's flagging multi-timeframe agreement, not telling you to enter — still check each panel's setup first.<br><br>
+      <b>Stop-loss logic:</b> placed beyond the nearest structural swing point, padded by 1.5× ATR(14), so it sits outside normal noise rather than at a round number.<br><br>
+      <b>Trade Setup:</b> Entry is the last close; Target 1/2 are 1.5R and 3R (R = distance to stop), pulled in to the nearest structural level when one sits closer. Shown only when a timeframe has a qualifying long/short signal.<br><br>
+      <b>Position Sizing:</b> uses the Account Size and Risk % you set above. Position size is set so that if price hits your stop, the loss equals exactly that % of your account — leverage is then back-solved from that, capped at 25× for display.<br><br>
+      <b>Speculative Projection:</b> a straight-line extrapolation of the last 20 candles' closing prices, projected 5 candles forward, with a range band from recent volatility (ATR). This describes where the recent trend points if it continued unchanged — it is not a forecast, and markets regularly deviate from straight lines.<br><br>
+      <b>Performance journal:</b> logging a trade saves it in this browser only, not to a server or account. Mark it won, lost, or closed yourself as it plays out, and the stats above the list update automatically.<br><br>
+      <b>On leverage:</b> this tool does not tell you to use leverage. It shows a sizing heuristic so that, if you choose to use leverage, your stop-loss risk stays a consistent % of your account regardless of how tight or wide the stop is.<br><br>
+      Data from Binance public market data. This is a technical-analysis and sizing tool, not financial advice — indicators and projections describe the past, not guarantee the future. Leveraged positions can be liquidated for a fraction of the loss an unleveraged position would take.
+    </footer>
+
+  </div>
+
+  <div id="perfView" hidden>
+    <div class="perf-head">
+      <h3>Performance Journal</h3>
+      <button id="clearJournalBtn" class="danger-btn">Clear All History</button>
+    </div>
+    <div class="perf-stats" id="perfStats"></div>
+    <div id="journalList"></div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
